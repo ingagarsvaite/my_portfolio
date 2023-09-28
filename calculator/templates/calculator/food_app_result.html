@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<p> your food: {{ food_item }}</p>
+<p> fiber: {{ fiber|floatformat:2 }} %</p>
+<p> magnesium: {{ mg|floatformat:2 }} %</p>
+<p> zinc: {{ zn|floatformat:2 }} %</p>
+<p> phosphor: {{ p|floatformat:2 }} %</p>
+<p> vitamin A : {{ vit_a|floatformat:2 }} %</p>
+<p> vitamin C : {{ vit_c|floatformat:2 }} %</p>
+<p> vitamin E : {{ vit_e|floatformat:2 }} %</p>
+
+<div id="container" style="width: 75%;">
+    <canvas id="nutrition-chart" data-url="{% url 'calculate'  %}"></canvas>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
+
+<script>
+    $(function () {
+
+        var $nutritionChart = $("#nutrition-chart");
+        $.ajax({
+            url: $nutritionChart.data("url"),
+            success: function (data) {
+
+                var { data | safe }
+                var ctx = $nutritionChart[0].getContext("2d");
+
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ["Fiber", "Magnesium", "Zinc", "Phosphor", "Folic Acid", "Vitamin A", "Vitamin C", "Vitamin E"],
+                        datasets: [{
+                            label: 'Food',
+                            backgroundColor: 'blue',
+                            data: []
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                            },
+                            title: {
+                                display: true,
+                                text: 'Nutrition Bar Chart'
+                            },
+                        },
+                    }
+                });
+
+            }
+        });
+
+    });
+</script>
+</body>
+</html>

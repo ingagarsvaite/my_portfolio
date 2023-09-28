@@ -1,0 +1,238 @@
+<!-- my_page.html -->
+{% extends "ingosapp/base.html" %}
+
+{% block title %}My Page Title{% endblock %}
+
+{% block content %}
+<h1>Which food is the best for you?</h1>
+<p>For a long time I have been interested in food and its nutritional value. There is plenty of information
+    that you need to eat a variety of fruits and vegetables. However, some of them are not that easy to find in the
+    local supermarket. I would love to continue my research about different food groups. Right now I am starting
+    with fruits and vegetables
+Therefore I decided to make an analysis on food and find out:
+<li>Which fruit or vegetable has the most fiber?</li>
+<li>What fruit or vegie is the most nutrient dense?</li>
+<li>Which is ULTIMATE fruit/vegie based on characterists?</li>
+<li>Which fruit or vegie is best for weight loss?</li>
+</p>
+
+<h2>Step 1: finding a database</h2>
+<p> I was surprised to see how many different databases are there. However, I was looking specifically one
+I could work with using SQL, so I used this one: ,,nuoroda i database'' </p>
+
+<h2>Step 2: exploring database and cleaning data</h2>
+<p> During the data exploration step I saw how many different fruits and vegetables where out there! I narrowed my research
+to look after fresh and dried fruits and raw and cooked vegetables. Mushrooms, leaves, beans and chickpeas were
+not included, as well as canned, sugary fruits, juices. Out of all tables I needed to create 4 different tables
+that included a specific group:
+<li> raw vegetables</li>
+<li> cooked vegetables</li>
+<li> raw fruits</li>
+<li> dried/dehydrated fruits</li>
+I also needed my tables to be informative, therefore I needed to add nutritional value. During my research I figured out
+that these are the vitamins and minerals which are found in fruits and vegetables exceptionally and could be
+very difficult to keep up their concentration in blood normal wating other foods.
+•	Vitamin A (beta-carotene)
+•	Vitamin C
+•	Vitamin E
+•	Magnesium
+•	Zinc
+•	Phosphorous
+•	Folic acid
+Vitamin C is nutrient which could not be found anywhere except fruits. Fiber is also and exceptional element.
+However, data was presented with values of a nutrient in 100 grams. I think 100 grams is a great start point for measuring,
+but to be precise with my analysis i added caloric value and will analyse the data of nutrients and comparing with their
+nutritional value of 100 kcal.
+Therefore, I created tables of every nutrient and its nutritional value in every food, as well as energy value of food.
+My next step would be joining those table and get a super mega table with the information I need. My SQL query code is
+right below:
+
+<br>
+<br>
+    <h6>SQL Code Example</h6>
+
+</p>
+
+<button class="see-more-button" data-target="hidden-block-1">See more</button>
+<div id="hidden-block-1" class="hidden-block" style="display: none;">
+    <!-- Content to be hidden initially -->
+    <p>laba diena</p>
+    <pre>
+        <code>
+            SELECT * FROM your_table
+            WHERE column_name = 'value'
+        </code>
+    </pre>
+</div>
+
+<p> In order to compare referential values, I needed base referential value of a day for every element that I used.
+Therefore I created a table which consists of every element i used before and its nutritional referential value.
+Needless to say, these are vidutinis referential values and for every person out there they are different. code for
+creating a table is right below and my source of information is here: https://betteryou.com/blogs/product-guides/nutrient-reference-value-chart
+</p>
+
+
+<button class="see-more-button" data-target="hidden-block-2">See more</button>
+<div id="hidden-block-2" class="hidden-block" style="display: none;">
+    <!-- Content to be hidden initially -->
+    <p>laba diena</p>
+    <pre>
+        <code>
+CREATE TABLE refvalue(
+id INT NOT NULL,
+element varchar(20),
+ref_value INT,
+PRIMARY KEY(id)
+)
+
+INSERT INTO refvalue( element, ref_value)
+VALUES
+( 'vit_a', 800),
+( 'vit_c', 80),
+( 'vit_e', 12),
+( 'zn', 10),
+( 'p', 700),
+( 'fa', 200),
+( 'fiber', 28),
+('energy', 2000);
+        </code>
+    </pre>
+</div>
+
+<p>I have done one joint table, now I need to extract only the food groupsthat i need.</p>
+
+
+<button class="see-more-button" data-target="hidden-block-3">See more</button>
+<div id="hidden-block-3" class="hidden-block" style="display: none;">
+    <!-- Content to be hidden initially -->
+    <p>laba diena</p>
+
+    <pre>
+        <code>
+CREATE TABLE vegetables_raw as
+SELECT * FROM ALLPRODUCTS
+WHERE food_group_id = 1100
+AND long_desc LIKE '%raw%'
+AND NOT(long_desc LIKE "%beans%"
+     OR long_desc LIKE "%peas%"
+     OR long_desc LIKE "%lentils%"
+     OR long_desc LIKE "%leaves%"
+	 OR long_desc LIKE "%greens%"
+	 OR long_desc LIKE "%mushroom%")
+--
+CREATE TABLE vegetables_cooked as
+SELECT * FROM ALLPRODUCTS
+WHERE food_group_id = 1100
+AND long_desc LIKE '%cook%'
+AND NOT(long_desc LIKE "%beans%"
+     OR long_desc LIKE "%peas%"
+     OR long_desc LIKE "%lentils%"
+     OR long_desc LIKE "%leaves%"
+	 OR long_desc LIKE "%greens%"
+	 OR long_desc LIKE "%mushroom%");
+
+CREATE TABLE fruits_raw as
+SELECT * FROM ALLPRODUCTS
+WHERE food_group_id = 900
+AND NOT (long_desc LIKE "%juice%"
+OR long_desc LIKE "%sauce%"
+OR long_desc LIKE "%canned%"
+OR long_desc LIKE "%frozen%"
+OR long_desc LIKE "%dried%"
+OR long_desc LIKE "%dehydrated%"
+OR long_desc LIKE "%peel%"
+)
+
+CREATE TABLE fruits_dried as
+SELECT * FROM ALLPRODUCTS
+WHERE food_group_id = 900
+AND (long_desc LIKE "%dried%"
+OR long_desc LIKE "%dehydrated%")
+AND NOT (long_desc LIKE "%juice%"
+OR long_desc LIKE "%sauce%"
+OR long_desc LIKE "%canned%"
+OR long_desc LIKE "%frozen%"
+OR long_desc LIKE "%peel%"
+)
+
+CREATE TABLE fruits as
+SELECT * FROM fruits_dried
+UNION ALL
+SELECT * FROM fruits_raw
+
+CREATE TABLE vegetables as
+SELECT * FROM vegetables_cooked
+UNION ALL
+SELECT * FROM vegetables_raw
+
+CREATE TABLE fruits_vegetables as
+SELECT * FROM fruits
+UNION ALL
+SELECT * FROM vegetables
+
+        </code>
+    </pre>
+</div>
+;
+
+<h2>Step 3: data analysis with pandas and matplotlib </h2>
+
+<p> This analysis I will separate into different tasks. I would love to find out:
+a) the most fiber dense food group and food products in 100 grams and 100 kcal
+b) which foods have the most vitamins (100 g and 100 kcal)
+c) calculation of top 20 foods of all groups and which of them are the most vitamin and fiber dense
+
+    Let's begin!
+
+<h3> Step 3a: Data of every microelement in fruits and vegetables</h3>
+
+    <h4>Fiber in food</h4>
+<p>Using SQL I have joined both fruit and veg tables just to prepare to do some analysis on all food groups at onece.
+Using pandas library I decided to figure top 10 most fiber dense fruits and vegies in 100 grams as well as in 100 kcal.
+    Here is shown some prominent results. Entire code of jupyter you can find over <a href="url">here</a>.
+</p>
+
+<p> i will add information later </p>
+
+    <h4>Magnesium in food</h4>
+<p>Here is shown some prominent results. Entire code of jupyter you can find over <a href="{% url 'magnesium' %}">here</a>. </p>
+<p> i will add information later </p>
+
+<h4>Zinc in food</h4>
+<p>Here is shown some prominent results. Entire code of jupyter you can find over <a href="{% url 'zinc' %}">here</a>. </p>
+<p> i will add information later </p>
+
+    <h4>Folic Acid in food</h4>
+<p>Here is shown some prominent results. Entire code of jupyter you can find over <a href="{% url 'folicacid' %}">here</a>. </p>
+<p> i will add information later </p>
+
+    <h4>Phosphor in food</h4>
+<p>Here is shown some prominent results. Entire code of jupyter you can find over <a href="{% url 'phosphor' %}">here</a>. </p>
+<p> i will add information later </p>
+
+    <h4>Vitamin A in food</h4>
+<p>Here is shown some prominent results. Entire code of jupyter you can find over <a href="{% url 'vitaminA' %}">here</a>. </p>
+<p> i will add information later </p>
+
+    <h4>Vitamin C in food</h4>
+<p>Here is shown some prominent results. Entire code of jupyter you can find over <a href="{% url 'vitaminC' %}">here</a>. </p>
+<p> i will add information later </p>
+
+    <h4>Vitamin E in food</h4>
+<p>Here is shown some prominent results. Entire code of jupyter you can find over <a href="{% url 'vitaminE' %}">here</a>. </p>
+<p> i will add information later </p>
+
+<h3> Step 3b: Which food wins? </h3>
+
+<p> In order to find out which food is the best, I looked up the referential nutritional value of the element which
+intrigues me. Considering the value of just those 7 elements that were previously investigated, we will decide which fruit or vegetable
+has the most. If 100 g of certain food product has a ref. value of 100%+, it gets 1 point. Is the value is 25% it gets 0.25 points and so on.
+So the maximum is 7 points. This evaluation is only for fun and it does not include multiple nutrients and the ability for nutrients
+to penetrate in our system, there are multiple factors that are not included in this research (yet) </p>
+<p> Here you can see most prominent work done. All the work in jupyter template yo can find <a href="{% url 'best' %}">here</a></p>
+
+
+
+
+
+{% endblock %}

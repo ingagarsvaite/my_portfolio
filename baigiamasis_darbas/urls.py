@@ -16,15 +16,30 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from django.views.generic import RedirectView
-import settings
+from django.conf import settings
+from django.conf.urls.static import static
+
+# # from postit_api import urls
+# from django.views.generic import RedirectView
+# # import settings
+
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('ingosapp.urls')),
-    path("", RedirectView.as_view(url="ingosapp/", permanent=True)),
-    ] + (static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) +
-         (static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT))
+    # path('', include('ingosapp.urls'), namespace="ingosapp"),
+    path('api/', include('postit_api.urls')),
+    path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    path('notebooks/', include('notebooks.urls')),
+    path('food_app/', include("calculator.urls"))
+    # path("", RedirectView.as_view(url="ingosapp/", permanent=True))
+    ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+
     # path("duomenys/", include("ingosapp.urls"))
 
