@@ -20,46 +20,53 @@
 
 <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
-
+<!--<script> console.log(food_item)</script>-->
 <script>
-    $(function () {
+$(function () {
+    var $nutritionChart = $("#nutrition-chart");
+    $.ajax({
+        url: $nutritionChart.data("url"),
+        success: function (data) {
+            var ctx = $nutritionChart[0].getContext("2d");
 
-        var $nutritionChart = $("#nutrition-chart");
-        $.ajax({
-            url: $nutritionChart.data("url"),
-            success: function (data) {
-
-                var { data | safe }
-                var ctx = $nutritionChart[0].getContext("2d");
-
-                new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: ["Fiber", "Magnesium", "Zinc", "Phosphor", "Folic Acid", "Vitamin A", "Vitamin C", "Vitamin E"],
-                        datasets: [{
-                            label: 'Food',
-                            backgroundColor: 'blue',
-                            data: []
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        plugins: {
-                            legend: {
-                                position: 'top',
-                            },
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ["Fiber", "Magnesium", "Zinc", "Phosphor", "Folic Acid", "Vitamin A", "Vitamin C", "Vitamin E"],
+                    datasets: [{
+                        label: "{{ food_item|escapejs }}",
+                        backgroundColor: 'blue',
+                        data: {{ data|safe }}
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            type: 'linear',
                             title: {
                                 display: true,
-                                text: 'Nutrition Bar Chart'
+                                text: '%'
                             },
+                            min: 0,
+                            max: 100,
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
                         },
+                        title: {
+                            display: true,
+                            text: 'Nutrition Bar Chart'
+                        }
                     }
-                });
-
-            }
-        });
-
+                }
+            });
+        }
     });
+});
+
 </script>
 </body>
 </html>

@@ -3,8 +3,13 @@ from django.http import HttpResponse
 # from .models import ToDoList, Item
 from django.contrib import messages
 from .models import ContactProfile, Portfolio, Blog, Testimonial, Certificate
-from django.views import generic
+from django.views import generic, View
 from . forms import ContactForm
+import os
+from django.http import FileResponse
+from django.conf import settings
+
+
 
 class FoodScienceView(generic.TemplateView):
     template_name = "ingosapp/food_science.html"
@@ -12,6 +17,11 @@ class FoodScienceView(generic.TemplateView):
 class FoodAppView(generic.TemplateView):
     template_name = "calculator/food_app.html"
 
+class DownloadCVView(View):
+    def get(self, request, *args, **kwargs):
+        cv_file_path = os.path.join(settings.MEDIA_ROOT, 'cv', 'Garsvaite_cv_es.pdf')
+        response = FileResponse(open(cv_file_path, 'rb'))
+        return response
 
 class IndexView(generic.TemplateView):
     template_name = "ingosapp/index.html"
@@ -41,12 +51,17 @@ class ContactView(generic.FormView):
     def post(self, request):
         form = ContactForm(request.POST)
         if form.is_valid():
-            form.save()
-            messages.success(self.request, "Thank you. We will be in touch.")
+            message = ContactProfile(
+                name=form.cleaned_data['name'],
+                email=form.cleaned_data['email'],
+                subject=form.cleaned_data['subject'],
+                message_text=form.cleaned_data['message']
+        )
+            message.success(self.request, "Thank you. We will be in touch.")
             return super().form_valid(form)
         else:
             form = ContactForm()
-        return render(request, 'contact.html', {'form': form})
+            return render(request, self.template_name, {'form': form})
 
 class PortfolioView(generic.ListView):
     model = Portfolio

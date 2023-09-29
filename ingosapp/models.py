@@ -40,9 +40,9 @@ class ContactProfile(models.Model):
         ordering = ["timestamp"]
     timestamp = models.DateTimeField(auto_now_add=True)
     name = models.CharField(verbose_name="Name", max_length=100)
-    email = models.EmailField(verbose_name="Email")
-    subject = models.TextField(verbose_name="Subject")
-    message = models.TextField(verbose_name="Message")
+    email = models.EmailField(verbose_name="Email", max_length=100)
+    subject = models.CharField(verbose_name="Subject", max_length=100)
+    message = models.TextField(verbose_name="Message", max_length=1000)
 
     def __str__(self):
         return f"{self.name}"
@@ -144,6 +144,12 @@ class Certificate(models.Model):
 
     def __str__(self):
         return self.name
+
+class CV(models.Model):
+    title = models.CharField(max_length=100)
+    description = models.TextField(max_length=1000)
+    cv_file = models.FileField(upload_to="ingosapp/static/cv")
+
 
 # class ToDoList(models.Model):
 #     pavadinimas = models.CharField(max_length=200)
