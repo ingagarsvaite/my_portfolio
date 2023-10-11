@@ -1,14 +1,98 @@
-
 {% extends "ingosapp/base.html" %}
 
-{% block title %}My Page Title{% endblock %}
+{% block title %}Calculator{% endblock %}
 
 {% block content %}
 <h2> Food Calculator </h2>
-<form method = "POST">
+
+<button class="btn btn-primary" id="next-button" style="margin-bottom:10px">Fill your food</button>
+
+<div class="row justify-content-center">
+<!--<div class="col-lg-8 col-xl-7">-->
+<form method="post">
+  <div id="form-container">
     {% csrf_token %}
-    {{ form.as_p }}
-    <input type="submit" value="Submit">
+    {{ formset.management_form }}
+    {% for form in formset %}
+      {% if form.has_changed %}
+        <div class="formset-form" style="display: block;">
+      {% else %}
+        <div class="formset-form" style="display: none;">
+      {% endif %}
+      {{ form.as_table }}
+      </div>
+    {% endfor %}
+    <input class="btn btn-primary" style="margin-bottom:10px" type="submit" value="Calculate">
+  </div>
 </form>
+</div>
+
+
+
+<script>
+  const formContainer = document.getElementById("form-container");
+  const formsetForms = formContainer.querySelectorAll(".formset-form");
+  const nextButton = document.getElementById("next-button");
+
+  let currentFormIndex = 0;
+
+  // Function to show the next form
+  function showNextForm() {
+    if (currentFormIndex < formsetForms.length) {
+      formsetForms[currentFormIndex].style.display = "block";
+      currentFormIndex++;
+    }
+  }
+
+  // Initially hide all form elements except the first one
+  formsetForms.forEach(function (form, index) {
+    if (index === 0) {
+      form.style.display = "block";
+    } else {
+      form.style.display = "none";
+    }
+  });
+
+  // Check if a form is filled and display it
+  formsetForms.forEach(function (form, index) {
+    const inputs = form.querySelectorAll("input[type='text'], input[type='number'], select");
+    let isFilled = false;
+
+    inputs.forEach(function (input) {
+      if (input.value.trim() !== "") {
+        isFilled = true;
+      }
+    });
+
+    if (isFilled) {
+      form.style.display = "block";
+      currentFormIndex = index + 1; // Set the current index to the next form
+    }
+  });
+
+  // Add click event listener to the Next button
+  nextButton.addEventListener("click", showNextForm);
+
+  // Check for filled forms when the page loads
+  window.addEventListener("load", function () {
+    formsetForms.forEach(function (form, index) {
+      const inputs = form.querySelectorAll("input[type='text'], input[type='number'], select");
+      let isFilled = false;
+
+      inputs.forEach(function (input) {
+        if (input.value.trim() !== "") {
+          isFilled = true;
+        }
+      });
+
+      if (isFilled) {
+        form.style.display = "block";
+        currentFormIndex = index + 1; // Set the current index to the next form
+      }
+    });
+  });
+</script>
+
+
 
 {% endblock %}

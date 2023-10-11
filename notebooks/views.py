@@ -14,7 +14,7 @@ class TheBestView(generic.TemplateView):
         html_exporter = HTMLExporter()
         body, resources = html_exporter.from_file(open(notebook_filename, 'rb'))
 
-        context['title'] = 'Finding out the best fruit or vegie out there!:'
+        context['title'] = 'Finding out the best fruit or veggie out there!'
         context['jupyter_html'] = body
 
         return context
@@ -24,7 +24,7 @@ class MgView(generic.TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        notebook_filename = 'notebooks/jupyter/Foodscience.ipynb'
+        notebook_filename = 'notebooks/jupyter/magnesium.ipynb'
         html_exporter = HTMLExporter()
         body, resources = html_exporter.from_file(open(notebook_filename, 'rb'))
 
@@ -119,6 +119,20 @@ class ZnView(generic.TemplateView):
         body, resources = html_exporter.from_file(open(notebook_filename, 'rb'))
 
         context['title'] = 'Zinc in fruits and vegetables:'
+        context['jupyter_html'] = body
+
+        return context
+
+class FiberView(generic.TemplateView):
+    template_name = "notebooks/notebook.html"
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        notebook_filename = 'notebooks/jupyter/Foodscience.ipynb'
+        html_exporter = HTMLExporter()
+        body, resources = html_exporter.from_file(open(notebook_filename, 'rb'))
+
+        context['title'] = 'Analysis of fiber in different food groups'
         context['jupyter_html'] = body
 
         return context

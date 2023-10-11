@@ -1,26 +1,46 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-<p> your food: {{ food_item }}</p>
-<p> fiber: {{ fiber|floatformat:2 }} %</p>
-<p> magnesium: {{ mg|floatformat:2 }} %</p>
-<p> zinc: {{ zn|floatformat:2 }} %</p>
-<p> phosphor: {{ p|floatformat:2 }} %</p>
-<p> vitamin A : {{ vit_a|floatformat:2 }} %</p>
-<p> vitamin C : {{ vit_c|floatformat:2 }} %</p>
-<p> vitamin E : {{ vit_e|floatformat:2 }} %</p>
+{% extends "ingosapp/base.html" %}
 
-<div id="container" style="width: 75%;">
-    <canvas id="nutrition-chart" data-url="{% url 'calculate'  %}"></canvas>
+{% block title %}Calculations{% endblock %}
+
+{% block content %}
+
+{% for result in results %}
+<div class="calculuscontainer" style="display: inline-block;
+    margin-left: 20px; width: 300px; margin-top: 20px">
+  <div class="calculusparagraph">
+    <h6>{{ result.food_item }}</h6>
+  </div>
+  <div class="calculusparagraph">
+    <p>Fiber: {{ result.fiber|floatformat:2 }} %</p>
+  </div>
+  <div class="calculusparagraph">
+    <p>Magnesium: {{ result.mg|floatformat:2 }} %</p>
+  </div>
+  <div class="calculusparagraph">
+    <p>Zinc: {{ result.zn|floatformat:2 }} %</p>
+  </div>
+  <div class="calculusparagraph">
+    <p>Phosphor: {{ result.p|floatformat:2 }} %</p>
+  </div>
+  <div class="calculusparagraph">
+    <p>Vitamin A: {{ result.vit_a|floatformat:2 }} %</p>
+  </div>
+  <div class="calculusparagraph">
+    <p>Vitamin C: {{ result.vit_c|floatformat:2 }} %</p>
+  </div>
+  <div class="calculusparagraph">
+    <p>Vitamin E: {{ result.vit_e|floatformat:2 }} %</p>
+  </div>
+</div>
+{% endfor %}
+
+
+<div id="container" style="width: 75%; margin-left:20px; margin-bottom:20px">
+    <canvas id="nutrition-chart" data-url="{% url 'calculate' %}"></canvas>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
-<!--<script> console.log(food_item)</script>-->
 <script>
 $(function () {
     var $nutritionChart = $("#nutrition-chart");
@@ -29,26 +49,36 @@ $(function () {
         success: function (data) {
             var ctx = $nutritionChart[0].getContext("2d");
 
+            var colors = {{ colors|safe }};
+
             new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: ["Fiber", "Magnesium", "Zinc", "Phosphor", "Folic Acid", "Vitamin A", "Vitamin C", "Vitamin E"],
-                    datasets: [{
-                        label: "{{ food_item|escapejs }}",
-                        backgroundColor: 'blue',
-                        data: {{ data|safe }}
-                    }]
+                    labels: ["Fiber", "Magnesium", "Zinc", "Phosphor", "Vitamin A", "Vitamin C", "Vitamin E"],
+                    datasets: [
+                        {% for result in results %}
+                        {
+                            label: "{{ result.food_item }}",
+                            backgroundColor: colors[{{ forloop.counter0 }} % colors.length],
+                            data: [{{ result.fiber|floatformat:2 }}, {{ result.mg|floatformat:2 }}, {{ result.zn|floatformat:2 }}, {{ result.p|floatformat:2 }},
+                              {{ result.vit_a|floatformat:2 }}, {{ result.vit_c|floatformat:2 }}, {{ result.vit_e|floatformat:2 }}]
+                        },
+                        {% endfor %}
+                    ]
                 },
                 options: {
                     responsive: true,
                     scales: {
+                        x: {
+                            stacked: true,
+                        },
                         y: {
-                            type: 'linear',
+                            stacked: true,
+                            beginAtZero: true,
                             title: {
                                 display: true,
                                 text: '%'
                             },
-                            min: 0,
                             max: 100,
                         }
                     },
@@ -58,7 +88,8 @@ $(function () {
                         },
                         title: {
                             display: true,
-                            text: 'Nutrition Bar Chart'
+                            text: 'Nutrition Bar Chart',
+                            fontSize: 35
                         }
                     }
                 }
@@ -66,7 +97,84 @@ $(function () {
         }
     });
 });
-
 </script>
-</body>
-</html>
+
+<div style="margin-left:20px">
+ <p>
+  {% if sum_fiber < 80 %}
+    Your fiber content is pretty low. Make sure to get enough fiber from grains like buckwheat, rice, or legumes.
+  {% elif sum_fiber < 99 %}
+    You have almost hit your fiber requirement!
+  {% else %}
+    <b>CONGRATULATIONS!</b> You hit your fiber requirement!
+  {% endif %}
+</p>
+<p>
+  {% if sum_mg < 80 %}
+    Your magnesium content is low. Make sure to get enough magnesium from seeds, nuts, or fish.
+  {% elif sum_mg < 99 %}
+    You have almost hit your magnesium requirement!
+  {% else %}
+    <b>CONGRATULATIONS!</b> You hit your magnesium requirement!
+  {% endif %}
+</p>
+<p>
+  {% if sum_zn < 80 %}
+    Your zinc content is low. Make sure to get enough zinc from red meat, nuts, beans, dairy or whole grains.
+  {% elif sum_zn < 99 %}
+    You have almost hit your zinc requirement!
+  {% else %}
+    <b>CONGRATULATIONS!</b> You hit your zinc requirement!
+  {% endif %}
+</p>
+<p>
+  {% if sum_p < 80 %}
+    Your phosphorus content is low. Make sure to get enough phosphorus from meat, dairy, seafood or whole grains.
+  {% elif sum_zn < 99 %}
+    You have almost hit your phosphorus requirement!
+  {% else %}
+    <b>CONGRATULATIONS!</b> You hit your phosphorus requirement!
+  {% endif %}
+</p>
+<!--<p>-->
+<!--  {% if sum_fa < 80 %}-->
+<!--    Your folate content is low. Make sure to get enough folic acid from legumes, eggs. It is very difficult to hit folate-->
+<!--    required value without eating fruits e.g. melon, bananas, berries or avocado.-->
+<!--  {% elif sum_zn < 99 %}-->
+<!--    You have almost hit your folic acid requirement!-->
+<!--  {% else %}-->
+<!--    <b>CONGRATULATIONS!</b> You hit your folic acid requirement!-->
+<!--  {% endif %}-->
+<!--</p>-->
+<p>
+  {% if sum_vita < 80 %}
+    Your vitamin A content is low. Make sure to get enough vitamin A from legumes, eggs. It is very difficult to hit vitamin A
+    required value without eating vegetables, e.g. carrots, sweet potatoes, leafy greens
+  {% elif sum_vita < 99 %}
+    You have almost hit your vitamin A requirement!
+  {% else %}
+    <b>CONGRATULATIONS!</b> You hit your vitamin A requirement!
+  {% endif %}
+</p>
+<p>
+  {% if sum_vitc < 80 %}
+    Your vitamin C content is low. It's almost impossible to hit your vitamin C requirement without fruits and vegetables.
+  {% elif sum_vitc < 99 %}
+    You have almost hit your vitamin C requirement!
+  {% else %}
+    <b>CONGRATULATIONS!</b> You hit your vitamin C requirement!
+  {% endif %}
+</p>
+<p>
+  {% if sum_vite < 80 %}
+    Your vitamin E content is low. Make sure to get enough vitamin E from meat, dairy, vegetable oils or nuts.
+  {% elif sum_vite < 99 %}
+    You have almost hit your vitamin E requirement!
+  {% else %}
+    <b>CONGRATULATIONS!</b> You hit your vitamin E requirement!
+  {% endif %}
+</p>
+
+</div>
+
+{% endblock %}

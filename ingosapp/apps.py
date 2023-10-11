@@ -5,5 +5,5 @@ class IngosappConfig(AppConfig):
     name = 'ingosapp'
     verbose_name = 'My App'
 
-    def ready(self):
-        import ingosapp.signals
+    # def ready(self):
+    #     import ingosapp.signals

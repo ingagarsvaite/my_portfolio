@@ -19,12 +19,14 @@
                 <!-- Portfolio Grid Items-->
                 <div class="row justify-content-center">
                     <!-- Portfolio Item 1-->
-                    <div class="col-md-6 col-lg-4 mb-5">
-                        <div class="portfolio-item mx-auto" data-bs-toggle="modal" data-bs-target="#portfolioModal1">
+                    <div class="col-md-6 col-lg-4 mb-5" >
+                        <div class="portfolio-item mx-auto" data-bs-toggle="modal" data-bs-target="#portfolioModal1" >
                             <div class="portfolio-item-caption d-flex align-items-center justify-content-center h-100 w-100">
                                 <div class="portfolio-item-caption-content text-center text-white"><i class="fas fa-plus fa-3x"></i></div>
                             </div>
+                            <div class="projects" style="font-size: 20px; text-align:center">
                             <p>Nutritional value of fruits and vegetables</p>
+                                </div>
                         </div>
                     </div>
                     <!-- Portfolio Item 2-->
@@ -33,7 +35,9 @@
                             <div class="portfolio-item-caption d-flex align-items-center justify-content-center h-100 w-100">
                                 <div class="portfolio-item-caption-content text-center text-white"><i class="fas fa-plus fa-3x"></i></div>
                             </div>
-                             <p>Nutritional value of fruits and vegetables. Calculator</p>
+                            <div class="projects" style="font-size: 20px; text-align:center">
+                            <p>Calculator of nutritional values </p>
+                                </div>
                         </div>
                     </div>
                     <!-- Portfolio Item 3-->
@@ -42,7 +46,9 @@
                             <div class="portfolio-item-caption d-flex align-items-center justify-content-center h-100 w-100">
                                 <div class="portfolio-item-caption-content text-center text-white"><i class="fas fa-plus fa-3x"></i></div>
                             </div>
-                            <p> Project 3 </p>
+                            <div class="projects" style="font-size: 20px; text-align:center">
+                            <p>COMING SOON! A price calculator of nutritional value </p>
+                                </div>
                         </div>
                     </div>
                     </div>
@@ -62,8 +68,8 @@
                 </div>
                 <!-- About Section Content-->
                 <div class="row">
-                    <div class="col-lg-4 ms-auto"><p class="lead">Hello! I am interested in web development, data science and analysis and health and food. Here you can find my portfolio projects and maybe gain some new information. Enjoy!</p></div>
-                    <div class="col-lg-4 me-auto"><p class="lead">Don't know what to write</p></div>
+                    <div class="col-lg-4 ms-auto"><p class="lead">Hello! Welcome to my portfolio, where I showcase my passion for data analysis, data science, web development, backend programming, as well as food and nutrition. Here, you'll find a diverse range of projects that explore the realms of data, web technologies, backend systems, and the fascinating world of food and nutrition. </p></div>
+                    <div class="col-lg-4 me-auto"><p class="lead">Feel free to explore, and I hope you gain valuable insights from my work. If you are interested in working with me, please send me a message right below or reach me through my social media which links you can find in the footer.</p></div>
                 </div>
                 <!-- About Section Button-->
                 <div class="text-center mt-4">
@@ -88,45 +94,46 @@
                 <!-- Contact Section Form-->
                 <div class="row justify-content-center">
                     <div class="col-lg-8 col-xl-7">
-                        <form id="ContactForm">
+                        <form id="ContactForm" action="{% url 'ingosapp:contact' %}" method="POST">
+                    {% csrf_token %}
                             <!-- Name input-->
                             <div class="form-floating mb-3">
-                                <input class="form-control" id="name" type="text" placeholder="Enter your name..." data-sb-validations="required" />
+                                <input class="form-control" id="name" name="name" type="text" placeholder="Enter your name..." data-sb-validations="required" />
                                 <label for="name">Full name</label>
                                 <div class="invalid-feedback" data-sb-feedback="name:required">A name is required.</div>
                             </div>
                             <!-- Email address input-->
                             <div class="form-floating mb-3">
-                                <input class="form-control" id="email" type="email" placeholder="name@example.com" data-sb-validations="required,email" />
+                                <input class="form-control" id="email" name="email" type="email" placeholder="name@example.com" data-sb-validations="required,email" />
                                 <label for="email">Email address</label>
                                 <div class="invalid-feedback" data-sb-feedback="email:required">An email is required.</div>
                                 <div class="invalid-feedback" data-sb-feedback="email:email">Email is not valid.</div>
                             </div>
                             <!-- Subject input-->
                             <div class="form-floating mb-3">
-                                <input class="form-control" id="subject" type="subject" placeholder="Question" />
+                                <input class="form-control" id="subject" name="subject" type="subject" placeholder="Question" />
                                 <label for="subject">Subject</label>
                             </div>
                             <!-- Message input-->
                             <div class="form-floating mb-3">
-                                <textarea class="form-control" id="message" type="text" placeholder="Enter your message here..." style="height: 10rem" data-sb-validations="required"></textarea>
+                                <textarea class="form-control" id="message" name="message" type="text" placeholder="Enter your message here..." style="height: 10rem" data-sb-validations="required"></textarea>
                                 <label for="message">Message</label>
                                 <div class="invalid-feedback" data-sb-feedback="message:required">A message is required.</div>
                             </div>
-                            <!-- Submit success message-->
-                            <!---->
-                            <!-- This is what your users will see when the form-->
-                            <!-- has successfully submitted-->
-                            <div class="d-none" id="submitSuccessMessage">
-                                <div class="text-center mb-3">
-                                    <div class="fw-bolder">Your letter was sent!</div>
-                                    We will reach you out in 5 buisness days.
-                                </div>
-                            </div>
-                            <!-- Submit error message-->
-                            <!---->
-                            <!-- This is what your users will see when there is-->
-                            <!-- an error submitting the form-->
+<!--                            this is for messages-->
+                                                         {% if success_message %}
+<div class="alert alert-success">
+    <strong>Success!</strong>
+    {{ success_message }}
+</div>
+{% endif %}
+
+{% if error_message %}
+<div class="alert alert-danger">
+    <strong>Error</strong>
+    {{ error_message }}
+</div>
+{% endif %}
                             <div class="d-none" id="submitErrorMessage"><div class="text-center text-danger mb-3">Message was not sent</div></div>
                             <!-- Submit Button-->
                             <button class="btn btn-primary btn-xl" id="submitButton" type="submit">Send</button>
@@ -135,5 +142,94 @@
                 </div>
             </div>
         </section>
+<!-- Portfolio Modals-->
+        <!-- Portfolio Modal 1-->
+        <div class="portfolio-modal modal fade" id="portfolioModal1" tabindex="-1" aria-labelledby="portfolioModal1" aria-hidden="true">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header border-0"><button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button></div>
+                    <div class="modal-body text-center pb-5">
+                        <div class="container">
+                            <div class="row justify-content-center">
+                                <div class="col-lg-8">
+                                    <!-- Portfolio Modal - Title-->
+                                    <h2 class="portfolio-modal-title text-secondary text-uppercase mb-0">Analysis of fruits and vegetables nutrition</h2>
+                                    <!-- Icon Divider-->
+                                    <div class="divider-custom">
+                                        <div class="divider-custom-line"></div>
+                                        <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
+                                        <div class="divider-custom-line"></div>
+                                    </div>
+                                    <!-- Portfolio Modal - Image-->
+                                    <img class="img-fluid rounded mb-5" style="height:300px" src="static/assets/basket.jpg" alt="..." />
+                                    <!-- Portfolio Modal - Text-->
+                                    <p class="mb-4" style="font-size:16px">This is food data analysis done using SQL and PYTHON libraries. I am trying to figure out which plant-based food is best to consume and why.</p>
+                                    <a href="/food_science" class="btn btn-primary">Go to Page</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Portfolio Modal 2-->
+        <div class="portfolio-modal modal fade" id="portfolioModal2" tabindex="-1" aria-labelledby="portfolioModal2" aria-hidden="true">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header border-0"><button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button></div>
+                    <div class="modal-body text-center pb-5">
+                        <div class="container">
+                            <div class="row justify-content-center">
+                                <div class="col-lg-8">
+                                    <!-- Portfolio Modal - Title-->
+                                    <h2 class="portfolio-modal-title text-secondary text-uppercase mb-0">Nutritional calculator</h2>
+                                    <!-- Icon Divider-->
+                                    <div class="divider-custom">
+                                        <div class="divider-custom-line"></div>
+                                        <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
+                                        <div class="divider-custom-line"></div>
+                                    </div>
+                                    <!-- Portfolio Modal - Image-->
+                                    <img class="img-fluid rounded mb-5" style="height:250px" src="static/assets/calculate.jpg" alt="..." />
+                                    <!-- Portfolio Modal - Text-->
+                                    <p class="mb-4">This program calculates nutritional value of fruits and vegetables that you had eaten. In order to calculate
+                                    enter food quantity in grams. The program is limited to 10 values</p>
+                                    <a href="{% url 'calculate' %}" class="btn btn-primary">Go to Page</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Portfolio Modal 3-->
+        <div class="portfolio-modal modal fade" id="portfolioModal3" tabindex="-1" aria-labelledby="portfolioModal3" aria-hidden="true">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header border-0"><button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button></div>
+                    <div class="modal-body text-center pb-5">
+                        <div class="container">
+                            <div class="row justify-content-center">
+                                <div class="col-lg-8">
+                                    <!-- Portfolio Modal - Title-->
+                                    <h2 class="portfolio-modal-title text-secondary text-uppercase mb-0">COMING SOON! The price of nutrition</h2>
+                                    <!-- Icon Divider-->
+                                    <div class="divider-custom">
+                                        <div class="divider-custom-line"></div>
+                                        <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
+                                        <div class="divider-custom-line"></div>
+                                    </div>
+                                    <!-- Portfolio Modal - Image-->
+                                    <img class="img-fluid rounded mb-5" style="height:300px" src="static/assets/price.jpg" alt="..." />
+                                    <!-- Portfolio Modal - Text-->
+                                    <p class="mb-4">My goal is to program a calculator which helps to decide which option of food is the best ration of quality and price based on my previous works. Coming soon.</p>
+<!--                                    <a href="{% url 'calculate' %}" class="btn btn-primary">Go to Page</a>-->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
 {% endblock %}
