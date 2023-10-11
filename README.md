@@ -1,5 +1,4 @@
 # my_portfolio
-Mano portfolio darbas
 
 Sveiki! Turiu kelis dalykus apie kodą pasakyti:
 
